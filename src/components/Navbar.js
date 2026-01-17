@@ -25,6 +25,7 @@ export default function Navbar() {
         { name: 'Experiences', href: '/feed' },
         { name: 'Discussion', href: '/discuss' },
         { name: 'Share Story', href: '/create' },
+        { name: 'Search People', href: '/search' },
     ];
 
     return (
@@ -100,6 +101,7 @@ export default function Navbar() {
                             {link.name}
                         </Link>
                     ))}
+                    {/* Search People - Added to navLinks, so manual link is removed */}
                     <div className="pt-2 flex justify-between items-center">
                         {user ? (
                             <>
