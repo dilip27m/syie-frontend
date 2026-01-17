@@ -1,12 +1,16 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import api from '@/lib/axios';
 import Cookies from 'js-cookie';
 
-export default function Comments({ postId, comments: initialComments }) {
+export default function Comments({ postId, comments: initialComments, onCommentsUpdate }) {
     const [comments, setComments] = useState(initialComments || []);
     const [newComment, setNewComment] = useState("");
-    // Removed loading state as per the provided snippet's handleComment
+
+    // Update local state when initialComments changes
+    useEffect(() => {
+        setComments(initialComments || []);
+    }, [initialComments]);
 
     const handleComment = async (e) => { // Keep e.preventDefault() for form submission
         e.preventDefault();
@@ -21,13 +25,18 @@ export default function Comments({ postId, comments: initialComments }) {
                 // Removed setLoading(false) as per the provided snippet's handleComment
                 return;
             }
-            const res = await api.post(`/posts/${postId}/comments`, { // Changed endpoint to /comments
-                text: newComment, // Changed from text to newComment
-                authorRoll: user.rollNumber, // Added authorRoll
+            const res = await api.post(`/posts/${postId}/comment`, {
+                text: newComment,
+                authorRoll: user.rollNumber,
                 authorName: user.fullName
             });
             setComments(res.data); // Backend returns the updated list
             setNewComment(""); // Changed from setText to setNewComment
+
+            // Notify parent component of comment update
+            if (onCommentsUpdate) {
+                onCommentsUpdate(res.data);
+            }
         } catch (err) {
             alert("Error posting comment"); // Changed alert message
         }
@@ -38,8 +47,13 @@ export default function Comments({ postId, comments: initialComments }) {
         if (!confirm('Delete this comment?')) return;
 
         try {
-            const res = await api.delete(`/posts/${postId}/comments/${commentId}`);
+            const res = await api.delete(`/posts/${postId}/comment/${commentId}`);
             setComments(res.data);
+
+            // Notify parent component of comment update
+            if (onCommentsUpdate) {
+                onCommentsUpdate(res.data);
+            }
         } catch (err) {
             alert(err.response?.data?.msg || 'Failed to delete comment');
         }

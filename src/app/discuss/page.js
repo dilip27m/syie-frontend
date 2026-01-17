@@ -59,6 +59,12 @@ export default function Discussion() {
         setActiveCommentId(activeCommentId === postId ? null : postId);
     };
 
+    const handleCommentsUpdate = (postId, updatedComments) => {
+        setPosts(posts.map(post =>
+            post._id === postId ? { ...post, comments: updatedComments } : post
+        ));
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 text-black pb-20 pt-6">
             <div className="max-w-2xl mx-auto px-4 sm:px-6">
@@ -125,7 +131,11 @@ export default function Discussion() {
 
                             {activeCommentId === post._id && (
                                 <div className="mt-4">
-                                    <Comments postId={post._id} comments={post.comments} />
+                                    <Comments
+                                        postId={post._id}
+                                        comments={post.comments}
+                                        onCommentsUpdate={(updatedComments) => handleCommentsUpdate(post._id, updatedComments)}
+                                    />
                                 </div>
                             )}
                         </div>
