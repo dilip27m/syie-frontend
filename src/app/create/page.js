@@ -8,8 +8,8 @@ export default function CreatePost() {
   const [formData, setFormData] = useState({
     companyName: "",
     experience: "",
-    postType: 'Interview',
-    interviewDate: "" // Add interview date field
+    postType: 'Interview', // Hardcoded - discussions use /discuss page
+    interviewDate: ""
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,21 +24,23 @@ export default function CreatePost() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous errors
+    setError("");
     setLoading(true);
 
     try {
       const userData = Cookies.get('user_data');
       const user = userData ? JSON.parse(userData) : null;
+
       if (!user) {
-        setError('Please log in to create a post');
-        setLoading(false); // Ensure loading is false if user not found
+        setError("Please login to post");
+        setLoading(false);
         return;
       }
+
       await api.post('/posts', {
         ...formData,
-        authorName: user.fullName,
-        postType: formData.postType
+        authorRoll: user.rollNumber,
+        authorName: user.fullName
       });
 
       router.push('/feed');
@@ -56,7 +58,7 @@ export default function CreatePost() {
           <h2 className="text-2xl sm:text-3xl font-black tracking-tighter uppercase mb-2">Share Your Story</h2>
           <p className="text-xs text-gray-500 uppercase tracking-widest">Help others learn from your experience</p>
         </header>
-        {/* Error Message Display */}
+
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
             <p className="text-sm text-red-600">{error}</p>
@@ -64,61 +66,43 @@ export default function CreatePost() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-8 pb-20">
-
-          {/* Post Type Selector */}
+          {/* Company Name */}
           <div className="flex flex-col group">
             <label className="text-[10px] font-black tracking-[0.2em] text-gray-400 uppercase mb-3 transition-colors group-focus-within:text-black">
-              Post Type
-            </label>
-            <div className="flex gap-4">
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, postType: 'Interview' })}
-                className={`flex-1 py-3 px-6 rounded-xl font-bold text-sm tracking-wide transition-all ${formData.postType === 'Interview'
-                  ? 'bg-black text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-              >
-                📝 Interview Experience
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, postType: 'Discussion' })}
-                className={`flex-1 py-3 px-6 rounded-xl font-bold text-sm tracking-wide transition-all ${formData.postType === 'Discussion'
-                  ? 'bg-black text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-              >
-                💬 Discussion
-              </button>
-            </div>
-          </div>
-
-          {/* Company Name Input */}
-          <div className="flex flex-col group">
-            <label className="text-[10px] font-black tracking-[0.2em] text-gray-400 uppercase mb-3 transition-colors group-focus-within:text-black">
-              Company
+              Company Name
             </label>
             <input
               type="text"
-              placeholder="e.g. GOOGLE"
-              className="border-b-2 border-gray-100 focus:border-black outline-none py-4 font-black uppercase text-xl tracking-tighter placeholder-gray-200 transition-all"
-              onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
               required
+              placeholder="Google, Microsoft, Amazon..."
+              className="w-full p-4 bg-gray-100 border border-gray-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-black transition-all outline-none text-sm"
+              onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
             />
           </div>
 
-          {/* Experience Text Area */}
-          <div className="flex flex-col group h-full">
+          {/* Interview Date */}
+          <div className="flex flex-col group">
+            <label className="text-[10px] font-black tracking-[0.2em] text-gray-400 uppercase mb-3">
+              Interview Date (Optional)
+            </label>
+            <input
+              type="date"
+              className="w-full p-4 bg-gray-100 border border-gray-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-black transition-all outline-none text-sm"
+              onChange={(e) => setFormData({ ...formData, interviewDate: e.target.value })}
+            />
+          </div>
+
+          {/* Experience */}
+          <div className="flex flex-col group">
             <label className="text-[10px] font-black tracking-[0.2em] text-gray-400 uppercase mb-3 transition-colors group-focus-within:text-black">
-              The Experience
+              Your Experience
             </label>
             <textarea
-              rows="12"
-              className="w-full resize-none border-2 border-gray-50 focus:border-black bg-gray-50 focus:bg-white rounded-xl outline-none p-6 text-sm font-medium leading-loose placeholder-gray-300 transition-all"
-              placeholder="Tell us everything... How many rounds? What were the coding questions? How was the interviewer? Did you get selected?"
-              onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
               required
+              rows="10"
+              placeholder="Share your interview process, questions asked, tips..."
+              className="w-full p-4 bg-gray-100 border border-gray-200 rounded-2xl resize-none focus:bg-white focus:ring-2 focus:ring-black transition-all outline-none text-sm"
+              onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
             />
           </div>
 
