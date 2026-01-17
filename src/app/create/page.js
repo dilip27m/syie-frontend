@@ -100,7 +100,32 @@ export default function CreatePost() {
             <textarea
               required
               rows="10"
-              placeholder="Share your interview process, questions asked, tips..."
+              placeholder={`Share your interview experience to help others prepare! 🎯
+
+Interview Duration: [e.g., 1.5 hours]
+Rounds: [e.g., 3 - Online Test, Technical, HR]
+
+Round 1 - Online/Aptitude:
+• Questions/Topics: [List what was asked]
+• Difficulty: [Easy/Medium/Hard]
+
+Round 2 - Technical:
+• Questions asked:
+  1. [e.g., Explain your project architecture]
+  2. [e.g., Code: Implement LRU Cache]
+  3. [e.g., Design a parking lot system]
+• Topics: [DSA, System Design, DBMS, etc.]
+
+Round 3 - HR:
+• Questions: [Why this company? Strengths/Weaknesses? etc.]
+
+Preparation Tips:
+- [What helped you most?]
+- [Resources/platforms used]
+- [Key topics to focus on]
+
+Overall Experience:
+[Share your thoughts, advice, and tips for future candidates]`}
               className="w-full p-4 bg-gray-100 border border-gray-200 rounded-2xl resize-none focus:bg-white focus:ring-2 focus:ring-black transition-all outline-none text-sm"
               onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
             />

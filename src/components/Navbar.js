@@ -32,7 +32,7 @@ export default function Navbar() {
             <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
 
                 {/* Logo */}
-                <Link href="/feed" className="font-bold tracking-tight text-lg flex items-center gap-2">
+                <Link href="/" className="font-bold tracking-tight text-lg flex items-center gap-2">
                     <span className="text-black">Placement</span>
                     <span className="text-gray-400">Flow</span>
                 </Link>
@@ -44,8 +44,8 @@ export default function Navbar() {
                             key={link.name}
                             href={link.href}
                             className={`text-xs font-bold uppercase tracking-widest transition-colors ${pathname === link.href
-                                    ? 'text-black border-b-2 border-black pb-1'
-                                    : 'text-gray-400 hover:text-black'
+                                ? 'text-black border-b-2 border-black pb-1'
+                                : 'text-gray-400 hover:text-black'
                                 }`}
                         >
                             {link.name}
@@ -55,17 +55,26 @@ export default function Navbar() {
 
                 {/* Desktop User Actions */}
                 <div className="hidden md:flex items-center gap-4">
-                    {user && (
-                        <Link href={`/student/${user.rollNumber}`} className="text-xs font-bold text-gray-500 hover:text-black uppercase tracking-widest">
-                            {user.fullName}
+                    {user ? (
+                        <>
+                            <Link href={`/student/${user.rollNumber}`} className="text-xs font-bold text-gray-500 hover:text-black uppercase tracking-widest">
+                                {user.fullName}
+                            </Link>
+                            <button
+                                onClick={handleLogout}
+                                className="bg-black text-white px-4 py-2 rounded-full text-[10px] font-bold tracking-widest hover:bg-gray-800 transition-all"
+                            >
+                                LOGOUT
+                            </button>
+                        </>
+                    ) : (
+                        <Link
+                            href="/login"
+                            className="bg-black text-white px-4 py-2 rounded-full text-[10px] font-bold tracking-widest hover:bg-gray-800 transition-all"
+                        >
+                            LOGIN
                         </Link>
                     )}
-                    <button
-                        onClick={handleLogout}
-                        className="bg-black text-white px-4 py-2 rounded-full text-[10px] font-bold tracking-widest hover:bg-gray-800 transition-all"
-                    >
-                        LOGOUT
-                    </button>
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -92,10 +101,18 @@ export default function Navbar() {
                         </Link>
                     ))}
                     <div className="pt-2 flex justify-between items-center">
-                        <Link href={`/student/${user?.rollNumber}`} className="text-sm font-bold text-black">
-                            {user?.fullName}
-                        </Link>
-                        <button onClick={handleLogout} className="text-xs font-bold text-red-500">LOGOUT</button>
+                        {user ? (
+                            <>
+                                <Link href={`/student/${user?.rollNumber}`} className="text-sm font-bold text-black">
+                                    {user?.fullName}
+                                </Link>
+                                <button onClick={handleLogout} className="text-xs font-bold text-red-500">LOGOUT</button>
+                            </>
+                        ) : (
+                            <Link href="/login" className="text-sm font-bold text-black w-full text-center py-2 bg-black text-white rounded-full">
+                                LOGIN
+                            </Link>
+                        )}
                     </div>
                 </div>
             )}

@@ -12,6 +12,7 @@ export default function Discussion() {
     const [text, setText] = useState("");
     const [activeCommentId, setActiveCommentId] = useState(null);
     const [user, setUser] = useState(null);
+    const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
     useEffect(() => {
         const userCookie = Cookies.get('user_data');
@@ -35,7 +36,7 @@ export default function Discussion() {
         if (!text.trim()) return;
 
         if (!user) {
-            alert("Please login to post");
+            setNotification({ show: true, message: 'Please login to post', type: 'error' });
             return;
         }
 
@@ -51,7 +52,7 @@ export default function Discussion() {
             fetchDiscussions();
         } catch (err) {
             console.error("Error posting:", err);
-            alert("Error posting discussion");
+            setNotification({ show: true, message: 'Error posting discussion', type: 'error' });
         }
     };
 
@@ -141,6 +142,28 @@ export default function Discussion() {
                         </div>
                     ))}
                 </div>
+
+                {/* Notification Modal */}
+                {notification.show && (
+                    <div
+                        className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn"
+                        onClick={() => setNotification({ show: false, message: '', type: '' })}
+                    >
+                        <div
+                            className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform animate-slideUp"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <h3 className="text-xl font-black uppercase mb-2 text-red-600">Error</h3>
+                            <p className="text-sm text-gray-600 mb-6">{notification.message}</p>
+                            <button
+                                onClick={() => setNotification({ show: false, message: '', type: '' })}
+                                className="w-full px-4 py-3 bg-black text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition-all uppercase tracking-wide"
+                            >
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -1,7 +1,34 @@
 "use client";
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 
 export default function LandingPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalPlaced: 0,
+    totalPosts: 0,
+    totalCompanies: 0
+  });
+
+  useEffect(() => {
+    const token = Cookies.get('token');
+    setIsAuthenticated(!!token);
+
+    // Fetch stats
+    const fetchStats = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/stats');
+        const data = await res.json();
+        setStats(data);
+      } catch (err) {
+        console.error('Error fetching stats:', err);
+      }
+    };
+    fetchStats();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-white text-black">
       <section className="px-8 pt-24 pb-12 text-center">
@@ -13,31 +40,49 @@ export default function LandingPage() {
         </p>
 
         <div className="flex flex-col gap-4 max-w-sm mx-auto">
-          <Link href="/login" className="bg-black text-white py-4 rounded-full font-bold text-sm tracking-widest hover:bg-gray-800 transition-all active:scale-95">
-            LOG IN
-          </Link>
-          <Link href="/feed" className="bg-white text-black border border-black py-4 rounded-full font-bold text-sm tracking-widest hover:bg-gray-50 transition-all">
-            BROWSE ARCHIVE
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link href="/feed" className="bg-black text-white py-4 rounded-full font-bold text-sm tracking-widest hover:bg-gray-800 transition-all active:scale-95">
+                GO TO FEED
+              </Link>
+              <Link href="/create" className="bg-white text-black border border-black py-4 rounded-full font-bold text-sm tracking-widest hover:bg-gray-50 transition-all">
+                SHARE YOUR STORY
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="bg-black text-white py-4 rounded-full font-bold text-sm tracking-widest hover:bg-gray-800 transition-all active:scale-95">
+                LOG IN
+              </Link>
+              <Link href="/feed" className="bg-white text-black border border-black py-4 rounded-full font-bold text-sm tracking-widest hover:bg-gray-50 transition-all">
+                BROWSE ARCHIVE
+              </Link>
+            </>
+          )}
         </div>
       </section>
 
-      {/* Glassmorphic Stats */}
+      {/* Glassmorphic Stats - Now Dynamic */}
       <section className="mt-auto p-8">
         <div className="glass rounded-3xl p-8 flex justify-between items-center border border-gray-100 shadow-xl">
           <div className="text-center">
-            <span className="block text-xl font-bold">120+</span>
+            <span className="block text-xl font-bold">{stats.totalUsers}+</span>
+            <span className="text-[10px] font-bold text-gray-400 uppercase">Users</span>
+          </div>
+          <div className="h-8 w-[1px] bg-gray-200"></div>
+          <div className="text-center">
+            <span className="block text-xl font-bold">{stats.totalPlaced}</span>
+            <span className="text-[10px] font-bold text-gray-400 uppercase">Placed</span>
+          </div>
+          <div className="h-8 w-[1px] bg-gray-200"></div>
+          <div className="text-center">
+            <span className="block text-xl font-bold">{stats.totalPosts}+</span>
             <span className="text-[10px] font-bold text-gray-400 uppercase">Posts</span>
           </div>
           <div className="h-8 w-[1px] bg-gray-200"></div>
           <div className="text-center">
-            <span className="block text-xl font-bold">45</span>
+            <span className="block text-xl font-bold">{stats.totalCompanies}</span>
             <span className="text-[10px] font-bold text-gray-400 uppercase">Companies</span>
-          </div>
-          <div className="h-8 w-[1px] bg-gray-200"></div>
-          <div className="text-center">
-            <span className="block text-xl font-bold">2026</span>
-            <span className="text-[10px] font-bold text-gray-400 uppercase">Batch</span>
           </div>
         </div>
       </section>
